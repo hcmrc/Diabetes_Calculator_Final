@@ -466,15 +466,17 @@ body {
 
 .slider-labels {
     display: flex;
-    justify-content: space-between;
     margin-top: 2px;
     font-size: 11px;
     color: var(--text-muted);
 }
 
-.slider-labels-bp,
-.slider-labels-glucose {
-    justify-content: space-around;
+.slider-labels span {
+    text-align: center;
+}
+
+.slider-labels-numeric {
+    justify-content: space-between;
 }
 
 .value-display {
@@ -1219,7 +1221,7 @@ body {
                         <div class="slider-track slider-track-age">
                             <div class="slider-fill" id="age-fill"></div>
                         </div>
-                        <div class="slider-labels">
+                        <div class="slider-labels slider-labels-numeric">
                             <span>20</span>
                             <span>50</span>
                             <span>80</span>
@@ -1268,7 +1270,7 @@ body {
                         <div class="slider-track">
                             <div class="slider-fill" id="height-fill"></div>
                         </div>
-                        <div class="slider-labels">
+                        <div class="slider-labels slider-labels-numeric">
                             <span id="height-min">48</span>
                             <span id="height-mid">66</span>
                             <span id="height-max">84</span>
@@ -1288,7 +1290,7 @@ body {
                             <div class="slider-segment safe" style="flex: 12"></div>
                             <div class="slider-segment danger" style="flex: 23"></div>
                         </div>
-                        <div class="slider-labels">
+                        <div class="slider-labels slider-labels-numeric">
                             <span id="waist-min">25</span>
                             <span id="waist-mid">42</span>
                             <span id="waist-max">60</span>
@@ -1309,22 +1311,22 @@ body {
                 <div class="input-group">
                     <label class="input-label">Systolic Blood Pressure (SBP) <span class="unit-label">(mmHg)</span></label>
                     <div class="slider-container">
-                        <input type="range" id="sbp-slider" min="90" max="200" value="120" class="slider slider-bp" oninput="updateValue('sbp')">
+                        <input type="range" id="sbp-slider" min="80" max="220" value="120" class="slider slider-bp" oninput="updateValue('sbp')">
                         <div class="slider-track slider-track-bp">
-                            <div class="slider-segment safe" style="flex: 30"></div>
-                            <div class="slider-segment alert" style="flex: 20"></div>
-                            <div class="slider-segment warning" style="flex: 20"></div>
-                            <div class="slider-segment danger" style="flex: 40"></div>
+                            <div class="slider-segment safe" style="flex: 40"></div>
+                            <div class="slider-segment alert" style="flex: 10"></div>
+                            <div class="slider-segment warning" style="flex: 10"></div>
+                            <div class="slider-segment danger" style="flex: 80"></div>
                         </div>
                         <div class="slider-labels slider-labels-bp">
-                            <span>Normal</span>
-                            <span>Pre-HTN</span>
-                            <span>Stage 1</span>
-                            <span>Stage 2</span>
+                            <span style="flex: 40">Normal</span>
+                            <span style="flex: 10; text-align: right; padding-right: 2px">Elev-ated</span>
+                            <span style="flex: 10; text-align: left; padding-left: 3px; white-space: nowrap">Stage&nbsp;1</span>
+                            <span style="flex: 80">Stage 2</span>
                         </div>
                     </div>
                     <div class="value-display">
-                        <input type="number" id="sbp-value" value="120" min="90" max="200" onchange="updateSlider('sbp')">
+                        <input type="number" id="sbp-value" value="120" onchange="updateSlider('sbp')">
                         <span class="value-unit">mmHg</span>
                     </div>
                 </div>
@@ -1345,9 +1347,9 @@ body {
                             <div class="slider-segment danger" style="flex: 174"></div>
                         </div>
                         <div class="slider-labels slider-labels-glucose">
-                            <span>Normal</span>
-                            <span>Pre-Diabetes</span>
-                            <span>Diabetes</span>
+                            <span style="flex: 50">Normal</span>
+                            <span style="flex: 26">Pre-Diabetes</span>
+                            <span style="flex: 174">Diabetes</span>
                         </div>
                     </div>
                     <div class="value-display">
@@ -1361,14 +1363,14 @@ body {
                     <div class="slider-container">
                         <input type="range" id="cholHDL-slider" min="20" max="100" value="50" class="slider slider-hdl" oninput="updateValue('cholHDL')">
                         <div class="slider-track slider-track-hdl">
-                            <div class="slider-segment danger" style="flex: 20"></div>
-                            <div class="slider-segment alert" style="flex: 20"></div>
-                            <div class="slider-segment safe" style="flex: 40"></div>
+                            <div class="slider-segment danger" style="flex: 15"></div>
+                            <div class="slider-segment alert" style="flex: 5"></div>
+                            <div class="slider-segment safe" style="flex: 60"></div>
                         </div>
                         <div class="slider-labels slider-labels-reversed">
-                            <span>Low</span>
-                            <span>Borderline</span>
-                            <span>Good</span>
+                            <span style="flex: 15">Very-Low</span>
+                            <span style="flex: 5; text-align: left; padding-left: 3px">Low</span>
+                            <span style="flex: 60">Normal</span>
                         </div>
                     </div>
                     <div class="value-display">
@@ -1383,13 +1385,13 @@ body {
                         <input type="range" id="cholTri-slider" min="50" max="500" value="150" class="slider slider-tri" oninput="updateValue('cholTri')">
                         <div class="slider-track slider-track-tri">
                             <div class="slider-segment safe" style="flex: 100"></div>
-                            <div class="slider-segment alert" style="flex: 50"></div>
+                            <div class="slider-segment warning" style="flex: 50"></div>
                             <div class="slider-segment danger" style="flex: 300"></div>
                         </div>
                         <div class="slider-labels">
-                            <span id="cholTri-min">50</span>
-                            <span id="cholTri-mid">275</span>
-                            <span id="cholTri-max">500</span>
+                            <span style="flex: 100">Normal</span>
+                            <span style="flex: 50">Borderline High</span>
+                            <span style="flex: 300">High</span>
                         </div>
                     </div>
                     <div class="value-display">
@@ -1540,7 +1542,7 @@ const CONFIG = {
     // Slider Limits [min, max, step]
     RANGES: {
         age: { us: [20, 80, 1], si: [20, 80, 1] },
-        sbp: { us: [90, 200, 1], si: [90, 200, 1] },
+        sbp: { us: [80, 220, 1], si: [80, 220, 1] },
         height: { us: [48, 84, 1], si: [122, 213, 1] },      // 48-84 in * 2.54
         waist: { us: [25, 60, 1], si: [64, 152, 1] },        // 25-60 in * 2.54
         fastGlu: { us: [50, 300, 1], si: [2.8, 16.7, 0.1] }, // 50-300 mg/dL / 18
