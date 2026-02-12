@@ -563,8 +563,8 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    padding: 16px 0;
+    gap: 0;
+    padding: 8px 0;
 }
 
 .risk-value-inline {
@@ -637,20 +637,7 @@ body {
     color: var(--danger);
 }
 
-.risk-category {
-    font-size: 13px;
-    font-weight: 600;
-    padding: 6px 14px;
-    border-radius: 14px;
-    background: var(--safe-bg);
-    color: var(--safe);
-    white-space: nowrap;
-}
 
-.risk-category.low { background: var(--safe-bg); color: var(--safe); }
-.risk-category.moderate { background: var(--alert-bg); color: var(--alert); }
-.risk-category.high { background: var(--warning-bg); color: var(--warning); }
-.risk-category.very-high { background: var(--danger-bg); color: var(--danger); }
 
 /* ============================================
    CONTRIBUTION CHART
@@ -1462,7 +1449,6 @@ body {
                             <span id="risk-percentage">0.0</span>
                             <span class="risk-percent">%</span>
                         </div>
-                        <div class="risk-category" id="risk-category">Low Risk</div>
                     </div>
                 </div>
 
@@ -1581,8 +1567,8 @@ const CONFIG = {
             title: 'Blood Sugar Management',
             therapies: [
                 { name: 'Standard Medication', desc: 'Metformin is often the first step to help control blood sugar levels.' },
-                { name: 'Heart & Kidney Protection', desc: 'If you have heart or kidney concerns, ask your doctor about newer medications that specifically protect these organs (SGLT2 inhibitors or GLP-1).' },
-                { name: 'Weight-Friendly Options', desc: 'Some newer medications can help manage blood sugar while also supporting weight loss.' }
+                { name: 'Heart & Kidney Protection', desc: 'If you have heart or kidney concerns, ask your doctor about newer medications that specifically protect these organs (SGLT2 inhibitors or GLP-1) while also supporting weight loss.' },
+                // ...entfernt: Weight-Friendly Options
             ]
         },
         sbp: {
@@ -1590,9 +1576,9 @@ const CONFIG = {
             icon: 'favorite',
             title: 'Blood Pressure Control',
             therapies: [
-                { name: 'Combination Medications', desc: 'Doctors often recommend starting with a combination of two different blood pressure medications for better effect.' },
-                { name: 'Heart-Healthy Diet', desc: 'The DASH diet (rich in fruits, vegetables, whole grains) can lower blood pressure naturally.' },
-                { name: 'Reduce Salt', desc: 'Aim for less than 1 teaspoon of salt (2300mg sodium) per day.' }
+                { name: 'Combination Medications', desc: 'It is recommend to start with a combination of different blood pressure medications (e.g. RAS inhibitors and CCBs).' },
+                { name: 'Heart-Healthy Diet', desc: 'Restriction of alcohol and sodium consumption, increased consumption of vegetables, use of low-fat dairy products can lower blood pressure naturally.' },
+                // ...entfernt: Reduce Salt
             ]
         },
         cholHDL: {
@@ -1600,9 +1586,9 @@ const CONFIG = {
             icon: 'water_drop',
             title: 'Good Cholesterol (HDL) Improvement',
             therapies: [
-                { name: 'Regular Exercise', desc: 'Aim for 150 minutes per week of activity like brisk walking – this effectively raises "good" cholesterol.' },
-                { name: 'Quit Smoking', desc: 'Stopping smoking can raise your good cholesterol by 5-10% within just a few weeks.' },
-                { name: 'Healthy Lifestyle', desc: 'Losing weight, limiting alcohol, and eating healthy fats (olive oil, nuts, fish) all help.' }
+                { name: 'Regular Exercise', desc: 'Aim for 150 minutes per week of activity like brisk walking, or 75 minutes of intense exercise.' },
+                // ...entfernt: Quit Smoking
+                { name: 'Healthy Lifestyle', desc: 'Stopping smoking, limiting alcohol, and eating healthy fats (olive oil, nuts, fish) all help.' }
             ]
         },
         cholTri: {
@@ -1610,9 +1596,9 @@ const CONFIG = {
             icon: 'science',
             title: 'Blood Fats (Triglycerides)',
             therapies: [
-                { name: 'Prescription Fish Oil', desc: 'If blood fats (triglycerides) remain high, special prescription fish oil might be considered.' },
+                { name: 'Prescription Fish Oil', desc: 'If blood fats (triglycerides) remain high, special prescription fish oil (icosapent ethyl) might be considered.' },
                 { name: 'Cholesterol Medication', desc: 'Cholesterol-lowering medication (Statins) is usually recommended to protect your blood vessels.' },
-                { name: 'Diet & Weight', desc: 'Losing 5-10% of body weight can reduce triglycerides by 20%. Limit sugar, refined carbs, and alcohol.' }
+                // ...entfernt: Diet & Weight
             ]
         },
         waist: {
@@ -1620,11 +1606,11 @@ const CONFIG = {
             icon: 'straighten',
             title: 'Weight Management',
             therapies: [
-                { name: 'Diet & Exercise', desc: 'Reducing daily calories by 500-750 and exercising 150 min/week leads to steady, healthy weight loss.' },
-                { name: 'Modern Medications', desc: 'If lifestyle changes aren\'t enough, talk to your doctor about modern weight-management medications (e.g., weekly injections) that can support your goals.' }
+                { name: 'Diet & Exercise', desc: 'Reducing daily calories and exercising more leads to steady weight loss.' },
+                { name: 'Medications', desc: 'Glucose-lowering drugs with additional weight-reducing effects (e.g. GLP-1RA) can also help.' }
             ],
             // Additional therapy shown only for high waist circumference (BMI ≥35 equivalent)
-            surgicalOption: { name: 'Surgical Options', desc: 'For significant obesity with health problems, weight-loss surgery may be discussed with your doctor.' }
+            surgicalOption: { name: 'Surgical Options', desc: 'For significant obesity with health problems, weight-loss surgery may be discussed.' }
         }
     }
 };
@@ -2163,16 +2149,7 @@ function updateRiskUI(percentage) {
         circle.style.stroke = color;
     }
 
-    const catEl = document.getElementById('risk-category');
-    if (catEl) {
-        let text = 'Low Risk', cls = 'low';
-        if (percentage >= 10) { text = 'Moderate Risk'; cls = 'moderate'; }
-        if (percentage >= 25) { text = 'High Risk'; cls = 'high'; }
-        if (percentage >= 50) { text = 'Very High Risk'; cls = 'very-high'; }
-        
-        catEl.textContent = text;
-        catEl.className = 'risk-category ' + cls;
-    }
+
     
     updateHeatmap(percentage);
 }
