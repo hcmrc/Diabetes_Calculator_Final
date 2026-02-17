@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Risk Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+/* ============================================
+   DIABETES RISK CALCULATOR - MODERN STYLES
+   ============================================ */
+
+:root {
+    /* Color Palette */
+    --primary: #2563eb;
+    --primary-light: #3b82f6;
+    --primary-dark: #1d4ed8;
+    
+    --safe: #22c55e;
+    --safe-light: #4ade80;
+    --safe-bg: rgba(34, 197, 94, 0.1);
+    
+    --alert: #eab308;
+    --alert-light: #facc15;
+    --alert-bg: rgba(234, 179, 8, 0.1);
+    
+    --warning: #f97316;
+    --warning-light: #fb923c;
+    --warning-bg: rgba(249, 115, 22, 0.1);
+    
+    --danger: #ef4444;
+    --danger-light: #f87171;
+    --danger-bg: rgba(239, 68, 68, 0.1);
+    
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f1f5f9;
+    
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    
+    --radius-sm: 6px;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+
+.app-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 10px 2%;
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    text-align: center;
+    padding: 6px 16px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border-radius: var(--radius);
+    color: white;
+    margin-bottom: 6px;
+    box-shadow: var(--shadow-md);
+    flex-shrink: 0;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-reset {
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-reset:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.header-icon {
+    font-size: 28px;
+}
+
+.header h1 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.header-subtitle {
+    font-size: 11px;
+    opacity: 0.9;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: minmax(250px, 1fr) minmax(400px, 2fr) minmax(300px, 1.5fr);
+    gap: 12px;
+    min-height: auto;
+}
+
+@media (max-width: 1200px) {
+    .main-content {
+        grid-template-columns: 1fr 1fr;
+    }
+    .center-column {
+        grid-column: 1 / -1;
+        order: -1;
+    }
+}
+
+@media (max-width: 900px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+    .app-container {
+        padding: 10px;
+    }
+}
+
+/* Right Column */
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: visible;
+}
+
+.right-column .contribution-card {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Center Column */
+.center-column {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: visible;
+}
+
+.center-column .treatment-card {
+    flex: 1;
+    padding: 10px;
+}
+
+.center-column .card-header h3 {
+    font-size: 14px;
+}
+
+.center-column .therapy-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* ============================================
+   PANELS
+   ============================================ */
+
+.input-panel,
+.results-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-panel {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    overflow-y: visible;
+    font-size: 12px;
+}
+
+.input-panel .panel-header {
+    padding-bottom: 4px;
+    margin-bottom: 2px;
+}
+
+.input-panel .panel-header h2 {
+    font-size: 14px;
+}
+
+.input-panel .section-divider {
+    margin: 1px 0 1px;
+}
+
+.input-panel .input-group {
+    margin-bottom: 3px;
+}
+
+.input-panel .input-label {
+    font-size: 12px;
+    margin-bottom: 1px;
+}
+
+.input-panel .slider-container {
+    padding-bottom: 4px;
+}
+
+.input-panel .slider-labels {
+    font-size: 11px;
+}
+
+.input-panel .value-display {
+    margin-top: 0px;
+}
+
+.input-panel .value-display input {
+    width: 52px;
+    padding: 2px 4px;
+    font-size: 12px;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 4px;
+}
+
+.panel-header .material-icons-round {
+    color: var(--primary);
+    font-size: 20px;
+}
+
+.panel-header h2 {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.section-divider {
+    display: flex;
+    align-items: center;
+    margin: 3px 0 2px;
+}
+
+.section-divider .section-icon {
+    font-size: 16px;
+    color: var(--primary);
+    margin-right: 4px;
+}
+
+.section-divider span:not(.section-icon) {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    padding-right: 6px;
+}
+
+.section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
+}
+
+/* ============================================
+   INPUT GROUPS
+   ============================================ */
+
+.input-group {
+    margin-bottom: 8px;
+}
+
+.input-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.unit-label {
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+/* Toggle Switch */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toggle-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    min-width: 26px;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 32px;
+    height: 18px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    transition: 0.3s;
+    border-radius: 20px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--primary);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(14px);
+}
+
+/* Slider */
+.slider-container {
+    position: relative;
+    padding-bottom: 8px;
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: transparent;
+    outline: none;
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.4);
+    border: 2px solid white;
+    transition: transform 0.15s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.4);
+    border: 2px solid white;
+}
+
+.slider-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+    display: flex;
+    pointer-events: none;
+}
+
+.slider-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-light), var(--primary));
+    border-radius: 3px;
+    transition: width 0.1s ease;
+    pointer-events: none;
+}
+
+.slider-segment {
+    height: 100%;
+}
+
+.slider-segment.safe { background: var(--safe); }
+.slider-segment.alert { background: var(--alert); }
+.slider-segment.warning { background: var(--warning); }
+.slider-segment.danger { background: var(--danger); }
+
+.slider-labels {
+    display: flex;
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.slider-labels span {
+    text-align: center;
+}
+
+.slider-labels-numeric {
+    justify-content: space-between;
+}
+
+.value-display {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.value-display input {
+    width: 60px;
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.value-display input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.value-unit {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   RESULTS CARDS
+   ============================================ */
+
+.risk-score-card,
+.contribution-card,
+.treatment-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 8px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+.risk-score-card {
+    padding: 6px 10px;
+}
+
+.risk-header,
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.risk-header .material-icons-round,
+.card-header .material-icons-round {
+    color: var(--primary);
+    font-size: 18px;
+}
+
+.risk-header h2 {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.card-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.card-description {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+/* Risk Circle */
+.risk-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 8px 0;
+}
+
+.risk-value-inline {
+    display: flex;
+    align-items: baseline;
+    white-space: nowrap;
+}
+
+.risk-value-inline span:first-child {
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--danger);
+}
+
+.risk-value-inline .risk-percent {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--danger);
+}
+
+.risk-circle {
+    position: relative;
+    width: 180px;
+    height: 180px;
+}
+
+.risk-circle svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+}
+
+.risk-circle-bg {
+    fill: none;
+    stroke: var(--bg-tertiary);
+    stroke-width: 8;
+    display: none;
+}
+
+.risk-circle-fill {
+    fill: none;
+    stroke: var(--safe);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
+    display: none;
+}
+
+.risk-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: baseline;
+    white-space: nowrap;
+}
+
+.risk-value span:first-child {
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--danger);
+}
+
+.risk-percent {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--danger);
+}
+
+
+
+/* ============================================
+   CONTRIBUTION CHART
+   ============================================ */
+
+.contribution-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.contribution-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.contribution-row.no-contribution {
+    opacity: 0.4;
+}
+
+.contribution-label {
+    width: 140px;
+    min-width: 140px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    text-align: right;
+}
+
+.contribution-bar-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    height: 37px;
+}
+
+.contribution-bar-negative {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100%;
+}
+
+.contribution-bar-center {
+    width: 2px;
+    height: 100%;
+    background: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.contribution-bar-positive {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100%;
+}
+
+.contribution-bar {
+    height: 30px;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    min-width: 2px;
+}
+
+.contribution-bar.negative {
+    background: linear-gradient(270deg, var(--danger), var(--danger-light));
+}
+
+.contribution-bar.positive {
+    background: linear-gradient(90deg, var(--safe-light), var(--safe));
+}
+
+.contribution-legend {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid var(--border-color);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.legend-color {
+    width: 12px;
+    height: 8px;
+    border-radius: 2px;
+}
+
+.legend-color.decreases {
+    background: linear-gradient(90deg, var(--safe-light), var(--safe));
+}
+
+.legend-color.increases {
+    background: linear-gradient(270deg, var(--danger), var(--danger-light));
+}
+
+/* ============================================
+   TREATMENT HEATMAP
+   ============================================ */
+
+.treatment-heatmap {
+    margin-bottom: 8px;
+}
+
+.heatmap-container {
+    display: flex;
+    gap: 6px;
+}
+
+.heatmap-y-axis {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-right: 6px;
+    width: 45px;
+}
+
+.heatmap-y-axis .axis-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    margin-bottom: 4px;
+}
+
+.heatmap-y-axis .axis-ticks {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 280px;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+}
+
+.heatmap-main {
+    flex: 1;
+}
+
+.heatmap-grid {
+    position: relative;
+    height: 280px;
+    border-radius: var(--radius);
+    overflow: visible;
+    border: 1px solid var(--border-color);
+}
+
+.heatmap-zones {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    height: 100%;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: linear-gradient(
+        135deg,
+        var(--safe) 0%,
+        var(--safe-light) 20%,
+        var(--alert) 40%,
+        var(--warning) 60%,
+        var(--danger-light) 80%,
+        var(--danger) 100%
+    );
+}
+
+.zone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.zone-1 { 
+    grid-column: 1; 
+    grid-row: 2;
+    background: rgba(34, 197, 94, 0.7);
+}
+
+.zone-2 { 
+    grid-column: 2; 
+    grid-row: 2;
+    background: rgba(234, 179, 8, 0.6);
+}
+
+.zone-3 { 
+    grid-column: 1; 
+    grid-row: 1;
+    background: rgba(249, 115, 22, 0.5);
+}
+
+.zone-4 { 
+    grid-column: 3; 
+    grid-row: 2;
+    background: rgba(249, 115, 22, 0.6);
+}
+
+.zone-5 { 
+    grid-column: 2 / 4; 
+    grid-row: 1;
+    background: rgba(239, 68, 68, 0.6);
+}
+
+.heatmap-pointer {
+    position: absolute;
+    transform: translate(-50%, 50%);
+    transition: left 0.3s ease, bottom 0.3s ease;
+    z-index: 10;
+}
+
+.heatmap-pointer .material-icons-round {
+    font-size: 28px;
+    color: var(--primary-dark);
+    background: white;
+    border-radius: 50%;
+    padding: 4px;
+    box-shadow: var(--shadow-md);
+    border: 2px solid var(--primary);
+}
+
+.heatmap-x-axis {
+    padding-top: 8px;
+}
+
+.heatmap-x-axis .axis-ticks {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.heatmap-x-axis .axis-label {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   THERAPY OPTIONS
+   ============================================ */
+
+.therapy-options h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.therapy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 6px;
+}
+
+.therapy-item {
+    display: flex;
+    gap: 6px;
+    padding: 6px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.therapy-item:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.therapy-icon {
+    font-size: 24px;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    height: fit-content;
+}
+
+.therapy-icon.lifestyle { background: var(--safe-bg); color: var(--safe); }
+.therapy-icon.metformin { background: rgba(37, 99, 235, 0.1); color: var(--primary); }
+.therapy-icon.glp1 { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
+.therapy-icon.sglt2 { background: rgba(6, 182, 212, 0.1); color: #06b6d4; }
+.therapy-icon.cgm { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+.therapy-icon.nutrition { background: var(--warning-bg); color: var(--warning); }
+
+.therapy-content h5 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1px;
+}
+
+.therapy-content p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.3;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+.footer {
+    margin-top: 8px;
+    padding: 8px 12px;
+    text-align: center;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.footer p {
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+}
+
+.footer p:last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 900px) {
+    .header {
+        padding: 12px 16px;
+    }
+    
+    .header h1 {
+        font-size: 20px;
+    }
+    
+    .input-panel,
+    .risk-score-card,
+    .contribution-card,
+    .treatment-card {
+        padding: 12px;
+    }
+    
+    .contribution-label {
+        width: 100px;
+        font-size: 11px;
+    }
+    
+    .therapy-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .heatmap-y-axis {
+        width: 50px;
+    }
+    
+    .zone span {
+        font-size: 10px;
+    }
+    
+    .center-column .therapy-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .risk-display {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .heatmap-grid {
+        height: 220px;
+    }
+    
+    .heatmap-y-axis .axis-ticks {
+        height: 220px;
+    }
+}
+/* ============================================
+   DYNAMIC TREATMENT RECOMMENDATIONS
+   ============================================ */
+
+.dynamic-treatments-section {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.dynamic-treatments-section h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dynamic-treatments-section h4 .material-icons-round {
+    color: var(--primary);
+    font-size: 18px;
+}
+
+#dynamic-treatments {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.treatment-ok {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--safe-bg);
+    border-radius: var(--radius);
+    border-left: 3px solid var(--safe);
+}
+
+.treatment-ok .material-icons-round {
+    color: var(--safe);
+    font-size: 24px;
+}
+
+.treatment-ok p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.factor-treatment {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius);
+    padding: 10px;
+    border-left: 3px solid var(--primary);
+}
+
+.factor-treatment.indicated {
+    border-left-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.factor-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.factor-icon {
+    font-size: 20px;
+    color: var(--primary);
+    background: rgba(59, 130, 246, 0.1);
+    padding: 4px;
+    border-radius: var(--radius-sm);
+}
+
+.factor-header h5 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.factor-therapies {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.therapy-mini {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 8px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.therapy-mini strong {
+    color: var(--text-primary);
+}
+
+.therapy-mini .source {
+    display: block;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-style: italic;
+    margin-top: 2px;
+}
+
+.indicated-heart {
+    color: #3b82f6;
+    font-size: 16px;
+    flex-shrink: 0;
+    animation: pulse-heart 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-heart {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.15);
+        opacity: 0.8;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="material-icons-round header-icon">monitor_heart</span>
+                <h1>Diabetes Risk Calculator</h1>
+            </div>
+            <button id="resetBtn" type="button" class="btn-reset">Reset</button>
+        </header>
+
+        <main class="main-content">
+            <!-- Left Column: Patient Data -->
+            <section class="input-panel">
+                <div class="panel-header">
+                    <span class="material-icons-round">tune</span>
+                    <h2>Patient Data</h2>
+                </div>
+
+                <!-- Unit Toggle -->
+                <div class="input-group">
+                    <label class="input-label">Units</label>
+                    <div class="toggle-container">
+                        <span class="toggle-label" id="unit-label-us">US</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="unit-toggle" onchange="toggleUnits()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label" id="unit-label-si">SI</span>
+                    </div>
+                </div>
+
+                <!-- Demographics -->
+                <div class="section-divider">
+                    <span class="material-icons-round section-icon">person</span>
+                    <span>Demographics</span>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Age</label>
+                    <div class="slider-container">
+                        <input type="range" id="age-slider" min="20" max="80" value="50" class="slider slider-age" oninput="updateValue('age')">
+                        <div class="slider-track slider-track-age">
+                            <div class="slider-fill" id="age-fill"></div>
+                        </div>
+                        <div class="slider-labels slider-labels-numeric">
+                            <span>20</span>
+                            <span>50</span>
+                            <span>80</span>
+                        </div>
+                    </div>
+                    <div class="value-display">
+                        <input type="number" id="age-value" value="50" min="20" max="80" onchange="updateSlider('age')">
+                        <span class="value-unit">years</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Race</label>
+                    <div class="toggle-container">
+                        <span class="toggle-label">Other</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="race-toggle" onchange="calculateRisk()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">Black</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Parental Diabetes History</label>
+                    <div class="toggle-container">
+                        <span class="toggle-label">No</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="parentHist-toggle" onchange="calculateRisk()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">Yes</span>
+                    </div>
+                </div>
+
+                <!-- Body Measurements -->
+                <div class="section-divider">
+                    <span class="material-icons-round section-icon">straighten</span>
+                    <span>Body Measurements</span>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Height <span class="unit-label" id="height-unit">(inches)</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="height-slider" min="48" max="84" value="66" step="1" class="slider" oninput="updateValue('height')">
+                        <div class="slider-track">
+                            <div class="slider-fill" id="height-fill"></div>
+                        </div>
+                        <div class="slider-labels slider-labels-numeric">
+                            <span id="height-min">48</span>
+                            <span id="height-mid">66</span>
+                            <span id="height-max">84</span>
+                        </div>
+                    </div>
+                    <div class="value-display">
+                        <input type="number" id="height-value" value="66" step="1" onchange="updateSlider('height')">
+                        <span class="value-unit" id="height-value-unit">in</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Waist Circumference <span class="unit-label" id="waist-unit">(inches)</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="waist-slider" min="25" max="60" value="36" step="1" class="slider slider-waist" oninput="updateValue('waist')">
+                        <div class="slider-track slider-track-waist">
+                            <div class="slider-segment safe" style="flex: 12"></div>
+                            <div class="slider-segment danger" style="flex: 23"></div>
+                        </div>
+                        <div class="slider-labels slider-labels-numeric">
+                            <span id="waist-min">25</span>
+                            <span id="waist-mid">42</span>
+                            <span id="waist-max">60</span>
+                        </div>
+                    </div>
+                    <div class="value-display">
+                        <input type="number" id="waist-value" value="36" step="1" onchange="updateSlider('waist')">
+                        <span class="value-unit" id="waist-value-unit">in</span>
+                    </div>
+                </div>
+
+                <!-- Blood Pressure -->
+                <div class="section-divider">
+                    <span class="material-icons-round section-icon">favorite</span>
+                    <span>Blood Pressure</span>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Systolic Blood Pressure (SBP) <span class="unit-label">(mmHg)</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="sbp-slider" min="80" max="220" value="120" class="slider slider-bp" oninput="updateValue('sbp')">
+                        <div class="slider-track slider-track-bp">
+                            <div class="slider-segment safe" style="flex: 40"></div>
+                            <div class="slider-segment alert" style="flex: 10"></div>
+                            <div class="slider-segment warning" style="flex: 10"></div>
+                            <div class="slider-segment danger" style="flex: 80"></div>
+                        </div>
+                        <div class="slider-labels slider-labels-bp">
+                            <span style="flex: 40">Normal</span>
+                            <span style="flex: 10; text-align: right; padding-right: 2px">Elev-ated</span>
+                            <span style="flex: 10; text-align: left; padding-left: 3px; white-space: nowrap">Stage&nbsp;1</span>
+                            <span style="flex: 80">Stage 2</span>
+                        </div>
+                    </div>
+                    <div class="value-display">
+                        <input type="number" id="sbp-value" value="120" onchange="updateSlider('sbp')">
+                        <span class="value-unit">mmHg</span>
+                    </div>
+                </div>
+
+                <!-- Blood Work -->
+                <div class="section-divider">
+                    <span class="material-icons-round section-icon">bloodtype</span>
+                    <span>Blood Work</span>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Fasting Glucose <span class="unit-label" id="fastGlu-unit">(mg/dL)</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="fastGlu-slider" min="50" max="300" value="95" class="slider slider-glucose" oninput="updateValue('fastGlu')">
+                        <div class="slider-track slider-track-glucose">
+                            <div class="slider-segment safe" style="flex: 50"></div>
+                            <div class="slider-segment alert" style="flex: 26"></div>
+                            <div class="slider-segment danger" style="flex: 174"></div>
+                        </div>
+                        <div class="slider-labels slider-labels-glucose">
+                            <span style="flex: 50">Normal</span>
+                            <span style="flex: 26">Pre-Diabetes</span>
+                            <span style="flex: 174">Diabetes</span>
+                        </div>
+                    </div>
+                    <div class="value-display">
+                        <input type="number" id="fastGlu-value" value="95" step="1" onchange="updateSlider('fastGlu')">
+                        <span class="value-unit" id="fastGlu-value-unit">mg/dL</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">HDL Cholesterol (Good) <span class="unit-label" id="cholHDL-unit">(mg/dL)</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="cholHDL-slider" min="20" max="100" value="50" class="slider slider-hdl" oninput="updateValue('cholHDL')">
+                        <div class="slider-track slider-track-hdl">
+                            <div class="slider-segment danger" style="flex: 15"></div>
+                            <div class="slider-segment alert" style="flex: 5"></div>
+                            <div class="slider-segment safe" style="flex: 60"></div>
+                        </div>
+                        <div class="slider-labels slider-labels-reversed">
+                            <span style="flex: 15">Very-Low</span>
+                            <span style="flex: 5; text-align: left; padding-left: 3px">Low</span>
+                            <span style="flex: 60">Normal</span>
+                        </div>
+                    </div>
+                    <div class="value-display">
+                        <input type="number" id="cholHDL-value" value="50" step="1" onchange="updateSlider('cholHDL')">
+                        <span class="value-unit" id="cholHDL-value-unit">mg/dL</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Triglycerides <span class="unit-label" id="cholTri-unit">(mg/dL)</span></label>
+                    <div class="slider-container">
+                        <input type="range" id="cholTri-slider" min="50" max="500" value="150" class="slider slider-tri" oninput="updateValue('cholTri')">
+                        <div class="slider-track slider-track-tri">
+                            <div class="slider-segment safe" style="flex: 100"></div>
+                            <div class="slider-segment warning" style="flex: 50"></div>
+                            <div class="slider-segment danger" style="flex: 300"></div>
+                        </div>
+                        <div class="slider-labels">
+                            <span style="flex: 100">Normal</span>
+                            <span style="flex: 50">Borderline High</span>
+                            <span style="flex: 300">High</span>
+                        </div>
+                    </div>
+                    <div class="value-display">
+                        <input type="number" id="cholTri-value" value="150" step="1" onchange="updateSlider('cholTri')">
+                        <span class="value-unit" id="cholTri-value-unit">mg/dL</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Center Column: Treatment Recommendations -->
+            <section class="center-column">
+                <div class="treatment-card">
+                    <div class="card-header">
+                        <span class="material-icons-round">medical_services</span>
+                        <h3>Treatment Recommendations</h3>
+                    </div>
+                    <div class="treatment-heatmap">
+                        <div class="heatmap-container">
+                            <div class="heatmap-main">
+                                <div class="heatmap-grid" id="heatmap-grid">
+                                    <div class="heatmap-zones">
+                                        <div class="zone zone-1">
+                                            <span>Low risk<br>Maintain healthy lifestyle</span>
+                                        </div>
+                                        <div class="zone zone-2">
+                                            <span>Lifestyle modifications recommended</span>
+                                        </div>
+                                        <div class="zone zone-3">
+                                            <span>Consider Metformin + lifestyle changes</span>
+                                        </div>
+                                        <div class="zone zone-4">
+                                            <span>High glucose<br>Medical evaluation needed</span>
+                                        </div>
+                                        <div class="zone zone-5">
+                                            <span>High risk<br>GLP-1 agonists or SGLT2 inhibitors may be indicated + Metformin and lifestyle changes</span>
+                                        </div>
+                                    </div>
+                                    <div class="heatmap-pointer" id="heatmap-pointer">
+                                        <span class="material-icons-round">favorite</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dynamic Factor-Specific Recommendations -->
+                    <div class="dynamic-treatments-section">
+                        <h4>
+                            Indicated Treatments Based on Your Values
+                        </h4>
+                        <div id="dynamic-treatments">
+                            <!-- Dynamically populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Risk Score & Factors -->
+            <section class="right-column">
+                <!-- Risk Score Display -->
+                <div class="risk-score-card">
+                    <div class="risk-header">
+                        <span class="material-icons-round">assessment</span>
+                        <h2>9-Year Diabetes Risk</h2>
+                    </div>
+                    <div class="risk-display">
+                        <div class="risk-value-inline">
+                            <span id="risk-percentage">0.0</span>
+                            <span class="risk-percent">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risk Factors Contribution -->
+                <div class="contribution-card">
+                    <div class="card-header">
+                        <span class="material-icons-round">bar_chart</span>
+                        <h3>Risk Factor Contributions</h3>
+                    </div>
+                    <p class="card-description">Red bars increase risk, green bars decrease risk.</p>
+                    <div class="contribution-chart" id="contribution-chart">
+                        <!-- Contribution bars will be generated by JavaScript -->
+                    </div>
+                    <div class="contribution-legend">
+                        <div class="legend-item">
+                            <span class="legend-color increases"></span>
+                            <span>Increases Risk</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color decreases"></span>
+                            <span>Decreases Risk</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+/**
+ * Diabetes Risk Calculator
+ * Based on the diabetes prediction model (Schmidt et al. 2005, ARIC Study)
+ * Enhanced UI: Diverging Bar Chart (Tornado Plot) with Mean Centering
+ */
+
+// ============================================
+// 1. CONFIGURATION & CONSTANTS
+// ============================================
+
+const CONFIG = {
+    // Model Coefficients (Betas) from Schmidt et al.
+    BETAS: {
+        age: 0.0173,
+        race: 0.4433,       // Black (1) vs Other (0)
+        parentHist: 0.4981, // Yes (1) vs No (0)
+        sbp: 0.0111,
+        waist: 0.0273,      // cm
+        height: -0.0326,    // cm
+        fastGlu: 1.5849,    // mmol/L
+        cholHDL: -0.4718,   // mmol/L
+        cholTri: 0.242,     // mmol/L
+        sigma: -9.9808      // Intercept
+    },
+
+    // Population Means (ARIC Study Baseline)
+    MEANS: {
+        age: 54,
+        race: 0.25,
+        parentHist: 0.3,
+        sbp: 120,
+        waist: 97,
+        height: 168,
+        fastGlu: 5.5,
+        cholHDL: 1.3,
+        cholTri: 1.7
+    },
+
+    // Unit Conversions
+    CONVERSIONS: {
+        heightToCm: 2.54,
+        waistToCm: 2.54,
+        gluToMmol: 1 / 18,
+        hdlToMmol: 1 / 38.67,
+        triToMmol: 1 / 88.57
+    },
+
+    // Slider Limits [min, max, step]
+    RANGES: {
+        age: { us: [20, 80, 1], si: [20, 80, 1] },
+        sbp: { us: [80, 220, 1], si: [80, 220, 1] },
+        height: { us: [48, 84, 1], si: [122, 213, 1] },      // 48-84 in * 2.54
+        waist: { us: [25, 60, 1], si: [64, 152, 1] },        // 25-60 in * 2.54
+        fastGlu: { us: [50, 300, 1], si: [2.8, 16.7, 0.1] }, // 50-300 mg/dL / 18
+        cholHDL: { us: [20, 100, 1], si: [0.5, 2.6, 0.1] },  // 20-100 mg/dL / 38.67
+        cholTri: { us: [50, 500, 1], si: [0.6, 5.6, 0.1] }   // 50-500 mg/dL / 88.57
+    },
+
+    // Display Labels for the Chart
+    LABELS: {
+        age: 'Age',
+        race: 'Race',
+        parentHist: 'Parental Diabetes History',
+        sbp: 'Blood Pressure',
+        waist: 'Waist Size',
+        height: 'Height',
+        fastGlu: 'Glucose',
+        cholHDL: 'Good Cholesterol (HDL)',
+        cholTri: 'Triglycerides'
+    },
+
+    // Factor-specific treatment recommendations with scientific sources
+    // Thresholds for elevated values (in SI units for internal calculations)
+    THRESHOLDS: {
+        fastGlu: { elevated: 5.6, high: 7.0 },      // mmol/L - ADA 2024 criteria
+        sbp: { elevated: 130, high: 160 },           // mmHg - Therapieoption ab 130 mmHg
+        cholHDL: { low: 1.0, veryLow: 0.8 },         // mmol/L (inverse - low is bad)
+        cholTri: { elevated: 1.7, high: 2.3 },       // mmol/L (150 mg/dL) - Therapieoption ab 150 mg/dL
+        waist: { elevated: 94, high: 102 }           // cm - WHO criteria (male); high corresponds to BMI ≥35
+    },
+
+    // Treatment recommendations for each factor (ESC 2023 Guidelines - Patient-Friendly Language)
+    TREATMENTS: {
+        fastGlu: {
+            id: 'glucose-treatment',
+            icon: 'bloodtype',
+            title: 'Blood Sugar Management',
+            therapies: [
+                { name: 'Standard Medication', desc: 'Metformin is often the first step to help control blood sugar levels.' },
+                { name: 'Heart & Kidney Protection', desc: 'If you have heart or kidney concerns, ask your doctor about newer medications that specifically protect these organs (SGLT2 inhibitors or GLP-1) while also supporting weight loss.' },
+                // ...entfernt: Weight-Friendly Options
+            ]
+        },
+        sbp: {
+            id: 'bp-treatment',
+            icon: 'favorite',
+            title: 'Blood Pressure Control',
+            therapies: [
+                { name: 'Combination Medications', desc: 'It is recommend to start with a combination of different blood pressure medications (e.g. RAS inhibitors and CCBs).' },
+                { name: 'Heart-Healthy Diet', desc: 'Restriction of alcohol and sodium consumption, increased consumption of vegetables, use of low-fat dairy products can lower blood pressure naturally.' },
+                // ...entfernt: Reduce Salt
+            ]
+        },
+        cholHDL: {
+            id: 'hdl-treatment',
+            icon: 'water_drop',
+            title: 'Good Cholesterol (HDL) Improvement',
+            therapies: [
+                { name: 'Regular Exercise', desc: 'Aim for 150 minutes per week of activity like brisk walking, or 75 minutes of intense exercise.' },
+                // ...entfernt: Quit Smoking
+                { name: 'Healthy Lifestyle', desc: 'Stopping smoking, limiting alcohol, and eating healthy fats (olive oil, nuts, fish) all help.' }
+            ]
+        },
+        cholTri: {
+            id: 'tri-treatment',
+            icon: 'science',
+            title: 'Blood Fats (Triglycerides)',
+            therapies: [
+                { name: 'Prescription Fish Oil', desc: 'If blood fats (triglycerides) remain high, special prescription fish oil (icosapent ethyl) might be considered.' },
+                { name: 'Cholesterol Medication', desc: 'Cholesterol-lowering medication (Statins) is usually recommended to protect your blood vessels.' },
+                // ...entfernt: Diet & Weight
+            ]
+        },
+        waist: {
+            id: 'waist-treatment',
+            icon: 'straighten',
+            title: 'Weight Management',
+            therapies: [
+                { name: 'Diet & Exercise', desc: 'Reducing daily calories and exercising more leads to steady weight loss.' },
+                { name: 'Medications', desc: 'Glucose-lowering drugs with additional weight-reducing effects (e.g. GLP-1RA) can also help.' }
+            ],
+            // Additional therapy shown only for high waist circumference (BMI ≥35 equivalent)
+            surgicalOption: { name: 'Surgical Options', desc: 'For significant obesity with health problems, weight-loss surgery may be discussed.' }
+        }
+    }
+};
+
+// State
+let state = {
+    useMetric: false
+};
+
+// Default values for reset
+const DEFAULTS = {
+    age: 50,
+    sbp: 120,
+    height: { us: 66, si: 168 },
+    waist: { us: 36, si: 91 },
+    fastGlu: { us: 95, si: 5.3 },
+    cholHDL: { us: 50, si: 1.3 },
+    cholTri: { us: 150, si: 1.7 },
+    race: false,
+    parentHist: false
+};
+
+// Reset function
+window.resetToDefaults = function() {
+    // Reset unit toggle to US
+    const unitToggle = document.getElementById('unit-toggle');
+    if (unitToggle) unitToggle.checked = false;
+    state.useMetric = false;
+    document.getElementById('unit-label-us').style.fontWeight = '700';
+    document.getElementById('unit-label-si').style.fontWeight = '400';
+    
+    // Update unit labels and slider ranges
+    updateUnitLabels();
+    updateSliderRanges();
+
+    // Reset all values to defaults (US units)
+    document.getElementById('age-slider').value = DEFAULTS.age;
+    document.getElementById('age-value').value = DEFAULTS.age;
+    document.getElementById('sbp-slider').value = DEFAULTS.sbp;
+    document.getElementById('sbp-value').value = DEFAULTS.sbp;
+    document.getElementById('height-slider').value = DEFAULTS.height.us;
+    document.getElementById('height-value').value = DEFAULTS.height.us;
+    document.getElementById('waist-slider').value = DEFAULTS.waist.us;
+    document.getElementById('waist-value').value = DEFAULTS.waist.us;
+    document.getElementById('fastGlu-slider').value = DEFAULTS.fastGlu.us;
+    document.getElementById('fastGlu-value').value = DEFAULTS.fastGlu.us;
+    document.getElementById('cholHDL-slider').value = DEFAULTS.cholHDL.us;
+    document.getElementById('cholHDL-value').value = DEFAULTS.cholHDL.us;
+    document.getElementById('cholTri-slider').value = DEFAULTS.cholTri.us;
+    document.getElementById('cholTri-value').value = DEFAULTS.cholTri.us;
+    
+    // Reset toggles
+    document.getElementById('race-toggle').checked = DEFAULTS.race;
+    document.getElementById('parentHist-toggle').checked = DEFAULTS.parentHist;
+
+    // Update slider fills and recalculate
+    ['age', 'sbp', 'height', 'waist', 'fastGlu', 'cholHDL', 'cholTri'].forEach(updateSliderFill);
+    calculateRisk();
+};
+
+// ============================================
+// 2. INITIALIZATION
+// ============================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize slider fills
+    ['age', 'sbp', 'height', 'waist', 'fastGlu', 'cholHDL', 'cholTri'].forEach(updateSliderFill);
+    
+    calculateRisk();
+    const unitToggle = document.getElementById('unit-toggle');
+    if (unitToggle) unitToggle.addEventListener('change', toggleUnits);
+    
+    // Add reset button event listener
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) resetBtn.addEventListener('click', resetToDefaults);
+});
+
+// ============================================
+// 3. INPUT & UI HANDLING
+// ============================================
+
+window.toggleUnits = function() {
+    const wasMetric = state.useMetric;
+    state.useMetric = document.getElementById('unit-toggle').checked;
+    
+    // Only convert if the unit system actually changed
+    if (wasMetric !== state.useMetric) {
+        // FIRST: Save current values BEFORE changing ranges (to avoid browser clamping)
+        const savedValues = {};
+        const fields = ['height', 'waist', 'fastGlu', 'cholHDL', 'cholTri'];
+        fields.forEach(field => {
+            savedValues[field] = parseFloat(document.getElementById(`${field}-value`).value);
+        });
+        
+        // Toggle label weights
+        document.getElementById('unit-label-us').style.fontWeight = state.useMetric ? '400' : '700';
+        document.getElementById('unit-label-si').style.fontWeight = state.useMetric ? '700' : '400';
+
+        updateUnitLabels();
+        
+        // Update slider ranges
+        updateSliderRangesOnly();
+        
+        // Convert and apply saved values
+        convertSavedValues(savedValues);
+        
+        // Update all slider fills
+        ['height', 'waist', 'fastGlu', 'cholHDL', 'cholTri', 'age', 'sbp'].forEach(updateSliderFill);
+    }
+    
+    calculateRisk();
+};
+
+function convertSavedValues(savedValues) {
+    const conv = CONFIG.CONVERSIONS;
+    const mode = state.useMetric ? 'si' : 'us';
+    
+    Object.keys(savedValues).forEach(field => {
+        const input = document.getElementById(`${field}-value`);
+        const slider = document.getElementById(`${field}-slider`);
+        let val = savedValues[field];
+        
+        // Convert the value based on the NEW unit system
+        if (state.useMetric) {
+            // Was US, now SI -> multiply to convert
+            if (field === 'height' || field === 'waist') val *= conv.heightToCm;
+            if (field === 'fastGlu') val *= conv.gluToMmol;
+            if (field === 'cholHDL') val *= conv.hdlToMmol;
+            if (field === 'cholTri') val *= conv.triToMmol;
+        } else {
+            // Was SI, now US -> divide to convert
+            if (field === 'height' || field === 'waist') val /= conv.heightToCm;
+            if (field === 'fastGlu') val /= conv.gluToMmol;
+            if (field === 'cholHDL') val /= conv.hdlToMmol;
+            if (field === 'cholTri') val /= conv.triToMmol;
+        }
+        
+        // Get the range for clamping
+        const range = CONFIG.RANGES[field][mode];
+        const min = range[0];
+        const max = range[1];
+        const step = range[2];
+        
+        // Clamp to range
+        if (val < min) val = min;
+        if (val > max) val = max;
+        
+        // Round appropriately
+        if (step < 1) {
+            val = parseFloat(val.toFixed(1));
+        } else {
+            val = Math.round(val);
+        }
+        
+        input.value = val;
+        slider.value = val;
+    });
+}
+
+window.updateSlider = function(field) {
+    const slider = document.getElementById(`${field}-slider`);
+    const input = document.getElementById(`${field}-value`);
+    let val = parseFloat(input.value);
+    
+    // Clamp
+    const min = parseFloat(slider.min), max = parseFloat(slider.max);
+    if (val < min) val = min; if (val > max) val = max;
+
+    slider.value = val;
+    input.value = val;
+    
+    updateSliderFill(field);
+    calculateRisk();
+};
+
+window.updateValue = function(field) {
+    const slider = document.getElementById(`${field}-slider`);
+    const input = document.getElementById(`${field}-value`);
+    input.value = slider.value;
+    updateSliderFill(field);
+    calculateRisk();
+};
+
+function updateSliderFill(field) {
+    const slider = document.getElementById(`${field}-slider`);
+    const fill = document.getElementById(`${field}-fill`);
+    if (!slider || !fill) return;
+
+    const min = parseFloat(slider.min), max = parseFloat(slider.max), val = parseFloat(slider.value);
+    const percent = ((val - min) / (max - min)) * 100;
+    fill.style.width = `${percent}%`;
+}
+
+function updateUnitLabels() {
+    const units = state.useMetric 
+        ? { h: 'cm', w: 'cm', g: 'mmol/L', c: 'mmol/L' } 
+        : { h: 'in', w: 'in', g: 'mg/dL', c: 'mg/dL' };
+
+    // Header labels (with parentheses for US units)
+    setUnitText('height-unit', units.h);
+    setUnitText('waist-unit', units.w);
+    setUnitText('fastGlu-unit', units.g);
+    setUnitText('cholHDL-unit', units.c);
+    setUnitText('cholTri-unit', units.c);
+    
+    // Value display labels (without parentheses)
+    setValueUnitText('height-value-unit', units.h);
+    setValueUnitText('waist-value-unit', units.w);
+    setValueUnitText('fastGlu-value-unit', units.g);
+    setValueUnitText('cholHDL-value-unit', units.c);
+    setValueUnitText('cholTri-value-unit', units.c);
+    
+    // Update slider axis labels
+    updateSliderAxisLabels();
+}
+
+function updateSliderAxisLabels() {
+    const mode = state.useMetric ? 'si' : 'us';
+    
+    // Height
+    const heightRange = CONFIG.RANGES.height[mode];
+    setLabelText('height-min', heightRange[0]);
+    setLabelText('height-mid', Math.round((heightRange[0] + heightRange[1]) / 2));
+    setLabelText('height-max', heightRange[1]);
+    
+    // Waist
+    const waistRange = CONFIG.RANGES.waist[mode];
+    setLabelText('waist-min', waistRange[0]);
+    setLabelText('waist-mid', Math.round((waistRange[0] + waistRange[1]) / 2));
+    setLabelText('waist-max', waistRange[1]);
+    
+    // Triglycerides
+    const triRange = CONFIG.RANGES.cholTri[mode];
+    setLabelText('cholTri-min', state.useMetric ? triRange[0].toFixed(1) : triRange[0]);
+    setLabelText('cholTri-mid', state.useMetric ? ((triRange[0] + triRange[1]) / 2).toFixed(1) : Math.round((triRange[0] + triRange[1]) / 2));
+    setLabelText('cholTri-max', state.useMetric ? triRange[1].toFixed(1) : triRange[1]);
+    
+    // Glucose on heatmap
+    const gluRange = CONFIG.RANGES.fastGlu[mode];
+    setLabelText('glucose-min', state.useMetric ? gluRange[0].toFixed(1) : gluRange[0]);
+    setLabelText('glucose-mid', state.useMetric ? ((gluRange[0] + gluRange[1]) / 2).toFixed(1) : Math.round((gluRange[0] + gluRange[1]) / 2));
+    setLabelText('glucose-max', state.useMetric ? gluRange[1].toFixed(1) : gluRange[1]);
+    setLabelText('glucose-axis-unit', state.useMetric ? '(mmol/L)' : '(mg/dL)');
+}
+
+function setLabelText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+
+function setUnitText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text.includes('mmol') ? text : `(${text})`;
+}
+
+function setValueUnitText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
+function convertInputValues() {
+    const fields = ['height', 'waist', 'fastGlu', 'cholHDL', 'cholTri'];
+    const conv = CONFIG.CONVERSIONS;
+    const mode = state.useMetric ? 'si' : 'us';
+    
+    fields.forEach(field => {
+        const input = document.getElementById(`${field}-value`);
+        const slider = document.getElementById(`${field}-slider`);
+        let val = parseFloat(input.value);
+        
+        // Convert the value
+        if (state.useMetric) {
+            // US -> SI
+            if (field === 'height' || field === 'waist') val *= conv.heightToCm;
+            if (field === 'fastGlu') val *= conv.gluToMmol;
+            if (field === 'cholHDL') val *= conv.hdlToMmol;
+            if (field === 'cholTri') val *= conv.triToMmol;
+        } else {
+            // SI -> US
+            if (field === 'height' || field === 'waist') val /= conv.heightToCm;
+            if (field === 'fastGlu') val /= conv.gluToMmol;
+            if (field === 'cholHDL') val /= conv.hdlToMmol;
+            if (field === 'cholTri') val /= conv.triToMmol;
+        }
+        
+        // Get the range for clamping
+        const range = CONFIG.RANGES[field][mode];
+        const min = range[0];
+        const max = range[1];
+        const step = range[2];
+        
+        // Clamp to range
+        if (val < min) val = min;
+        if (val > max) val = max;
+        
+        // Round appropriately
+        if (step < 1) {
+            val = parseFloat(val.toFixed(1));
+        } else {
+            val = Math.round(val);
+        }
+        
+        input.value = val;
+        slider.value = val;
+    });
+}
+
+function updateSliderRangesOnly() {
+    const mode = state.useMetric ? 'si' : 'us';
+    Object.keys(CONFIG.RANGES).forEach(field => {
+        const slider = document.getElementById(`${field}-slider`);
+        const input = document.getElementById(`${field}-value`);
+        const range = CONFIG.RANGES[field][mode];
+
+        if (slider && range) {
+            slider.min = range[0];
+            slider.max = range[1];
+            slider.step = range[2];
+            input.min = range[0];
+            input.max = range[1];
+            input.step = range[2];
+        }
+    });
+}
+
+function updateSliderRanges() {
+    const mode = state.useMetric ? 'si' : 'us';
+    Object.keys(CONFIG.RANGES).forEach(field => {
+        const slider = document.getElementById(`${field}-slider`);
+        const input = document.getElementById(`${field}-value`);
+        const range = CONFIG.RANGES[field][mode];
+
+        if (slider && range) {
+            slider.min = range[0];
+            slider.max = range[1];
+            slider.step = range[2];
+            input.min = range[0];
+            input.max = range[1];
+            input.step = range[2];
+            updateSliderFill(field);
+        }
+    });
+}
+
+// ============================================
+// 4. RISK CALCULATION
+// ============================================
+
+window.calculateRisk = function() {
+    // Get Inputs
+    const inputs = {
+        age: parseFloat(document.getElementById('age-value').value) || 0,
+        race: document.getElementById('race-toggle').checked ? 1 : 0, 
+        parentHist: document.getElementById('parentHist-toggle').checked ? 1 : 0,
+        sbp: parseFloat(document.getElementById('sbp-value').value) || 0,
+        height: parseFloat(document.getElementById('height-value').value) || 0,
+        waist: parseFloat(document.getElementById('waist-value').value) || 0,
+        fastGlu: parseFloat(document.getElementById('fastGlu-value').value) || 0,
+        cholHDL: parseFloat(document.getElementById('cholHDL-value').value) || 0,
+        cholTri: parseFloat(document.getElementById('cholTri-value').value) || 0
+    };
+
+    // Normalize to Metric for Model
+    let mVals = { ...inputs };
+    if (!state.useMetric) {
+        mVals.height = inputs.height * CONFIG.CONVERSIONS.heightToCm;
+        mVals.waist = inputs.waist * CONFIG.CONVERSIONS.waistToCm;
+        mVals.fastGlu = inputs.fastGlu * CONFIG.CONVERSIONS.gluToMmol;
+        mVals.cholHDL = inputs.cholHDL * CONFIG.CONVERSIONS.hdlToMmol;
+        mVals.cholTri = inputs.cholTri * CONFIG.CONVERSIONS.triToMmol;
+    }
+
+    // Calculate Score
+    const B = CONFIG.BETAS;
+    const score = B.sigma + 
+        (B.age * mVals.age) + (B.race * mVals.race) + (B.parentHist * mVals.parentHist) +
+        (B.sbp * mVals.sbp) + (B.waist * mVals.waist) + (B.height * mVals.height) +
+        (B.fastGlu * mVals.fastGlu) + (B.cholHDL * mVals.cholHDL) + (B.cholTri * mVals.cholTri);
+
+    const probability = 1 / (1 + Math.exp(-score));
+
+    // Calculate Contributions (Mean Centered)
+    const M = CONFIG.MEANS;
+    const contributions = {
+        age: B.age * (mVals.age - M.age),
+        race: B.race * (mVals.race - M.race),
+        parentHist: B.parentHist * (mVals.parentHist - M.parentHist),
+        sbp: B.sbp * (mVals.sbp - M.sbp),
+        waist: B.waist * (mVals.waist - M.waist),
+        height: B.height * (mVals.height - M.height),
+        fastGlu: B.fastGlu * (mVals.fastGlu - M.fastGlu),
+        cholHDL: B.cholHDL * (mVals.cholHDL - M.cholHDL),
+        cholTri: B.cholTri * (mVals.cholTri - M.cholTri)
+    };
+
+    updateRiskUI(probability * 100);
+    updateChartUI(contributions);
+    updateHeatmapWithContributions(contributions, probability * 100);
+};
+
+// ============================================
+// 5. ENHANCED CHART UI (Tornado Plot)
+// ============================================
+
+function updateChartUI(contributions) {
+    const container = document.getElementById('contribution-chart');
+    if (!container) return;
+
+    container.innerHTML = ''; 
+
+    // 1. Convert to Array and Sort by Impact (Absolute Value)
+    // This ensures the most important factors are at the top
+    const items = Object.entries(contributions).map(([key, val]) => ({
+        key,
+        val,
+        abs: Math.abs(val)
+    }));
+    
+    // Sort descending by absolute impact
+    items.sort((a, b) => b.abs - a.abs);
+
+    // 2. Determine Scale
+    // Find max value to define the 100% width of the bars
+    const maxVal = Math.max(...items.map(i => i.abs)) || 0.1;
+
+    // 3. Render Header (Optional, for clarity)
+    const header = document.createElement('div');
+    header.style.display = 'flex';
+    header.style.fontSize = '10px';
+    header.style.color = '#94a3b8';
+    header.style.marginBottom = '5px';
+    header.innerHTML = `
+        <div style="width: 35%"></div>
+        <div style="flex: 1; text-align: right; padding-right: 5px;">PROTECTIVE</div>
+        <div style="width: 2px"></div>
+        <div style="flex: 1; text-align: left; padding-left: 5px;">RISK</div>
+    `;
+    container.appendChild(header);
+
+    // 4. Render Bars
+    items.forEach(item => {
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.alignItems = 'center';
+        row.style.marginBottom = '8px';
+        row.style.fontSize = '12px';
+        row.style.height = '24px';
+
+        // LABEL (Left side)
+        const label = document.createElement('div');
+        label.style.width = '35%';
+        label.style.overflow = 'hidden';
+        label.style.whiteSpace = 'nowrap';
+        label.style.textOverflow = 'ellipsis';
+        label.style.color = '#475569';
+        label.style.fontWeight = '500';
+        label.textContent = CONFIG.LABELS[item.key];
+
+        // CHART AREA (75%)
+        // Split into Left (Negative) and Right (Positive) panes
+        const chartArea = document.createElement('div');
+        chartArea.style.flex = '1';
+        chartArea.style.display = 'flex';
+        chartArea.style.height = '100%';
+        chartArea.style.position = 'relative';
+
+        // Center Line
+        const centerLine = document.createElement('div');
+        centerLine.style.position = 'absolute';
+        centerLine.style.left = '50%';
+        centerLine.style.top = '0';
+        centerLine.style.bottom = '0';
+        centerLine.style.width = '1px';
+        centerLine.style.backgroundColor = '#cbd5e1';
+        centerLine.style.zIndex = '1';
+
+        // Calculation
+        const percentage = (item.abs / maxVal) * 100; // 0 to 100 relative to max
+        
+        // Only fill half the available width (50% is max for one side)
+        // Actually, we use flex boxes for left/right sides.
+        
+        const leftPane = document.createElement('div');
+        leftPane.style.flex = '1';
+        leftPane.style.display = 'flex';
+        leftPane.style.justifyContent = 'flex-end'; // Align bars to center
+        leftPane.style.paddingRight = '2px';
+
+        const rightPane = document.createElement('div');
+        rightPane.style.flex = '1';
+        rightPane.style.display = 'flex';
+        rightPane.style.justifyContent = 'flex-start'; // Align bars to center
+        rightPane.style.paddingLeft = '2px';
+
+        const bar = document.createElement('div');
+        bar.style.height = '100%';
+        bar.style.width = `${percentage}%`;
+        bar.style.borderRadius = '3px';
+        bar.style.transition = 'width 0.3s ease';
+
+        if (item.val < 0) {
+            // Negative -> Left Pane (Green)
+            bar.style.backgroundColor = '#10b981'; // Emerald 500
+            leftPane.appendChild(bar);
+        } else {
+            // Positive -> Right Pane (Red)
+            bar.style.backgroundColor = '#ef4444'; // Red 500
+            rightPane.appendChild(bar);
+        }
+
+        // Assemble
+        chartArea.appendChild(leftPane);
+        chartArea.appendChild(centerLine);
+        chartArea.appendChild(rightPane);
+
+        row.appendChild(label);
+        row.appendChild(chartArea);
+        container.appendChild(row);
+    });
+}
+
+function updateRiskUI(percentage) {
+    const riskEl = document.getElementById('risk-percentage');
+    if (riskEl) riskEl.textContent = percentage.toFixed(1);
+
+    const circle = document.getElementById('risk-circle-fill');
+    if (circle) {
+        // Circumference 2*PI*45 approx 283
+        const offset = 283 - (percentage / 100) * 283;
+        circle.style.strokeDashoffset = offset;
+        
+        let color = '#22c55e'; 
+        if (percentage >= 10) color = '#eab308';
+        if (percentage >= 25) color = '#f97316';
+        if (percentage >= 50) color = '#ef4444';
+        circle.style.stroke = color;
+    }
+
+
+    
+    updateHeatmap(percentage);
+}
+
+function updateHeatmap(risk) {
+    // Legacy function - now handled by updateHeatmapWithContributions
+}
+
+function updateHeatmapWithContributions(contributions, risk) {
+    const pointer = document.getElementById('heatmap-pointer');
+    if (!pointer) return;
+    
+    // X-Axis: Glucose contribution (how much glucose adds to risk vs mean)
+    // Positive contribution = higher glucose = move right
+    // Negative contribution = lower glucose = move left
+    const gluContribution = contributions.fastGlu;
+    
+    // Y-Axis: Sum of ALL OTHER risk contributions (excluding glucose)
+    const otherContributions = 
+        contributions.age + 
+        contributions.race + 
+        contributions.parentHist + 
+        contributions.sbp + 
+        contributions.waist + 
+        contributions.height + 
+        contributions.cholHDL + 
+        contributions.cholTri;
+    
+    // Scale X: Glucose contribution typically ranges from -4 to +4
+    // Map this to 5-95% horizontally
+    const gluMin = -4;
+    const gluMax = 4;
+    const clampedGlu = Math.min(Math.max(gluContribution, gluMin), gluMax);
+    const xPercent = 5 + ((clampedGlu - gluMin) / (gluMax - gluMin)) * 90;
+    
+    // Scale Y: Other contributions typically range from -3 to +3
+    // Map this to 5-95% vertically (bottom to top)
+    const otherMin = -3;
+    const otherMax = 3;
+    const clampedOther = Math.min(Math.max(otherContributions, otherMin), otherMax);
+    const yPercent = 5 + ((clampedOther - otherMin) / (otherMax - otherMin)) * 90;
+    
+    pointer.style.left = xPercent + '%';
+    pointer.style.bottom = yPercent + '%';
+    
+    // Update factor-specific treatment recommendations
+    updateTreatmentRecommendations();
+}
+
+// ============================================
+// 6. FACTOR-SPECIFIC TREATMENT RECOMMENDATIONS
+// ============================================
+
+function updateTreatmentRecommendations() {
+    // Get current values in SI units
+    const inputs = {
+        fastGlu: parseFloat(document.getElementById('fastGlu-value').value) || 0,
+        sbp: parseFloat(document.getElementById('sbp-value').value) || 0,
+        cholHDL: parseFloat(document.getElementById('cholHDL-value').value) || 0,
+        cholTri: parseFloat(document.getElementById('cholTri-value').value) || 0,
+        waist: parseFloat(document.getElementById('waist-value').value) || 0
+    };
+
+    // Convert to SI if needed (with same rounding as display conversion for consistency)
+    let siVals = { ...inputs };
+    if (!state.useMetric) {
+        siVals.fastGlu = parseFloat((inputs.fastGlu * CONFIG.CONVERSIONS.gluToMmol).toFixed(1));
+        siVals.cholHDL = parseFloat((inputs.cholHDL * CONFIG.CONVERSIONS.hdlToMmol).toFixed(1));
+        siVals.cholTri = inputs.cholTri * CONFIG.CONVERSIONS.triToMmol;
+        siVals.waist = Math.round(inputs.waist * CONFIG.CONVERSIONS.waistToCm);
+    }
+
+    // Determine which factors are elevated
+    const elevatedFactors = [];
+    const T = CONFIG.THRESHOLDS;
+
+    // Glucose: HbA1c ≥6.5% or fasting glucose ≥5.6 mmol/L (100 mg/dL)
+    if (siVals.fastGlu >= T.fastGlu.elevated) elevatedFactors.push('fastGlu');
+    // Blood Pressure: ≥140 mmHg systolic (ESC 2023)
+    if (siVals.sbp >= T.sbp.elevated) elevatedFactors.push('sbp');
+    // HDL Cholesterol: Inverse - low HDL (<1.0 mmol/L or <40 mg/dL) is bad
+    if (siVals.cholHDL <= T.cholHDL.low) elevatedFactors.push('cholHDL');
+    // Triglycerides: ≥1.7 mmol/L (150 mg/dL) per ESC 2023
+    if (
+        (state.useMetric && siVals.cholTri >= T.cholTri.elevated) ||
+        (!state.useMetric && inputs.cholTri >= 150)
+    ) elevatedFactors.push('cholTri');
+    // Waist circumference: ≥94 cm (male) per WHO criteria
+    if (siVals.waist >= T.waist.elevated) elevatedFactors.push('waist');
+    
+    // Track if waist is in "high" range (BMI ≥35 equivalent) for surgical option
+    const waistIsHigh = siVals.waist >= T.waist.high;
+
+    // Update the dynamic treatment recommendations section
+    const container = document.getElementById('dynamic-treatments');
+    if (!container) return;
+
+    // Clear previous recommendations
+    container.innerHTML = '';
+
+    if (elevatedFactors.length === 0) {
+        container.innerHTML = `
+            <div class="treatment-ok">
+                <span class="material-icons-round">check_circle</span>
+                <p>All modifiable risk factors are within normal range. Continue maintaining a healthy lifestyle.</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Build recommendations for each elevated factor
+    elevatedFactors.forEach(factor => {
+        const treatment = CONFIG.TREATMENTS[factor];
+        if (!treatment) return;
+
+        const factorDiv = document.createElement('div');
+        factorDiv.className = 'factor-treatment indicated';
+        factorDiv.id = treatment.id;
+
+        // Build therapies list
+        let therapies = [...treatment.therapies];
+        
+        // Add surgical option for waist/weight only if waist is in high range (BMI ≥35 equivalent)
+        if (factor === 'waist' && waistIsHigh && treatment.surgicalOption) {
+            therapies.push(treatment.surgicalOption);
+        }
+
+        let therapiesHTML = therapies.map(t => `
+            <div class="therapy-mini">
+                <span class="material-icons-round indicated-heart">favorite</span>
+                <div>
+                    <strong>${t.name}:</strong> ${t.desc}
+                </div>
+            </div>
+        `).join('');
+
+        factorDiv.innerHTML = `
+            <div class="factor-header">
+                <span class="material-icons-round factor-icon">${treatment.icon}</span>
+                <h5>${treatment.title}</h5>
+            </div>
+            <div class="factor-therapies">
+                ${therapiesHTML}
+            </div>
+        `;
+
+        container.appendChild(factorDiv);
+    });
+}
+    </script>
+</body>
+</html>
